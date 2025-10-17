@@ -1,25 +1,34 @@
 package dogapi;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * A minimal implementation of the BreedFetcher interface for testing purposes.
- * To avoid excessive calls to the real API, we can primarily test with a local
- * implementation that demonstrates the basic functionality of the interface.
- */
+
+
 public class BreedFetcherForLocalTesting implements BreedFetcher {
-    private int callCount = 0;
 
     @Override
-    public List<String> getSubBreeds(String breed) {
-        callCount++;
-        if ("hound".equalsIgnoreCase(breed)) {
-            return List.of("afghan", "basset");
+    public List<String> getSubBreeds(String breed)
+            throws BreedNotFoundException, IOException {
+        if (breed == null) {
+            throw new IOException("breed must not be null");
         }
-        throw new BreedNotFoundException(breed);
-    }
+        String b = breed.trim().toLowerCase();
 
-    public int getCallCount() {
-        return callCount;
+        switch (b) {
+            case "hound":
+                return Arrays.asList("afghan", "basset", "blood", "english", "ibizan", "plott", "walker");
+            case "bulldog":
+                return Arrays.asList("boston", "english", "french");
+            case "beagle":
+                return Collections.emptyList();
+            case "cat":
+                throw new BreedNotFoundException(b);
+            default:
+
+                return Collections.emptyList();
+        }
     }
 }
