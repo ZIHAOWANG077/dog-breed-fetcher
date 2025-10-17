@@ -26,10 +26,9 @@ public class DogApiBreedFetcher implements BreedFetcher {
     }
 
     @Override
-    public List<String> getSubBreeds(String breed)
-            throws BreedNotFoundException, IOException {
+    public List<String> getSubBreeds(String breed) throws BreedNotFoundException {
         if (breed == null || breed.isBlank()) {
-            throw new IOException("breed must not be null/blank");
+            throw new IllegalArgumentException("breed must not be null/blank");
         }
 
         String url = String.format(Locale.ROOT, BASE, breed.toLowerCase(Locale.ROOT).trim());
@@ -37,7 +36,7 @@ public class DogApiBreedFetcher implements BreedFetcher {
 
         try (Response resp = client.newCall(req).execute()) {
             if (resp.body() == null) {
-                throw new IOException("Empty response body");
+                throw new RuntimeException("Empty response body");
             }
             String body = resp.body().string();
 
@@ -48,7 +47,7 @@ public class DogApiBreedFetcher implements BreedFetcher {
                 if ("error".equals(status) && json.optInt("code", 0) == 404) {
                     throw new BreedNotFoundException(breed);
                 }
-                throw new IOException("HTTP error: " + resp.code());
+                throw new RuntimeException("HTTP error: " + resp.code());
             }
 
             if ("success".equals(status)) {
@@ -64,9 +63,12 @@ public class DogApiBreedFetcher implements BreedFetcher {
                 throw new BreedNotFoundException(breed);
             }
 
-            throw new IOException("Unexpected API payload");
+            throw new RuntimeException("Unexpected API payload");
         } catch (JSONException e) {
-            throw new IOException("Invalid JSON", e);
+            throw new RuntimeException("Invalid JSON", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Network/IO error", e);
         }
     }
 }
+
