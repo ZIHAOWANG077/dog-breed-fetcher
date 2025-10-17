@@ -15,22 +15,23 @@ public class Main {
             breed = "cat";
             result = getNumberOfSubBreeds(breed, breedFetcher);
             System.out.println(breed + " has " + result + " sub breeds");
-        } catch (BreedFetcher.BreedNotFoundException e) {
-            System.out.println("Breed not found: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("I/O error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     /**
      * Return the number of sub breeds that the given dog breed has according to the provided fetcher.
-     * @param breed the name of the dog breed
-     * @param breedFetcher the breedFetcher to use
-     * @return the number of sub breeds. Zero should be returned if there are no sub breeds returned by the fetcher
+     * Zero should be returned if there are no sub breeds, or the breed is invalid (not found).
      */
-    public static int getNumberOfSubBreeds(String breed, BreedFetcher breedFetcher)
-            throws BreedFetcher.BreedNotFoundException, IOException {
-        List<String> subs = breedFetcher.getSubBreeds(breed);
-        return subs.size();
+    public static int getNumberOfSubBreeds(String breed, BreedFetcher breedFetcher) {
+        try {
+            List<String> subs = breedFetcher.getSubBreeds(breed);
+            return subs.size();
+        } catch (BreedFetcher.BreedNotFoundException e) {
+            return 0;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
