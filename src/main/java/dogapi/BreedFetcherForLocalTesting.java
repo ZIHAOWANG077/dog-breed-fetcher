@@ -19,16 +19,13 @@ public class BreedFetcherForLocalTesting implements BreedFetcher {
 
         switch (b) {
             case "hound":
-                // 按 MainTest 期望：hound 有 2 个子品种
                 return Arrays.asList("afghan", "basset");
             case "bulldog":
                 return Arrays.asList("boston", "english", "french");
             case "beagle":
                 return Collections.emptyList();
-            case "cat":
-                throw new BreedNotFoundException(b);
             default:
-                return Collections.emptyList();
+                throw new BreedNotFoundException(b);
         }
     }
 
@@ -36,5 +33,3 @@ public class BreedFetcherForLocalTesting implements BreedFetcher {
         return callCount;
     }
 }
-
-

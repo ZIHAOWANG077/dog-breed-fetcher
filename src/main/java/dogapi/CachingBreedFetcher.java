@@ -21,7 +21,7 @@ public class CachingBreedFetcher implements BreedFetcher {
         callsMade++;
         try {
             List<String> result = delegate.getSubBreeds(breed);
-            cache.put(breed, Collections.unmodifiableList(new ArrayList<>(result)));
+            cache.put(breed, List.copyOf(result));
             return new ArrayList<>(result);
         } catch (BreedNotFoundException e) {
             throw e;
